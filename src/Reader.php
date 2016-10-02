@@ -6,6 +6,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Interop\Http\Middleware\MiddlewareInterface;
 use Interop\Http\Middleware\DelegateInterface;
+use RuntimeException;
 
 class Reader extends Filesystem implements MiddlewareInterface
 {
@@ -78,6 +79,11 @@ class Reader extends Filesystem implements MiddlewareInterface
     private function read(RequestInterface $request, $file)
     {
         $resource = $this->filesystem->readStream($file);
+
+        if ($resource === false) {
+            throw new RuntimeException(sprintf('Unable to read the file "%s"', $file));
+        }
+
         $response = Utils\Factory::createResponse()->withBody(Utils\Factory::createStream($resource));
 
         return self::range($response, $request->getHeaderLine('Range'));

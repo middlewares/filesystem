@@ -6,6 +6,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Interop\Http\Middleware\MiddlewareInterface;
 use Interop\Http\Middleware\DelegateInterface;
+use RuntimeException;
 
 class Writer extends Filesystem implements MiddlewareInterface
 {
@@ -29,10 +30,15 @@ class Writer extends Filesystem implements MiddlewareInterface
                 $path .= '.gz';
             }
 
-            $stream = $response->getBody()->detach();
-            $this->filesystem->writeStream($path, $stream);
+            $resource = $response->getBody()->detach();
 
-            return $response->withBody(Utils\Factory::createStream($stream));
+            if ($resource === false) {
+                throw new RuntimeException('Error on detach the stream body');
+            }
+
+            $this->filesystem->writeStream($path, $resource);
+
+            return $response->withBody(Utils\Factory::createStream($resource));
         }
 
         return $response;
