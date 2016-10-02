@@ -78,6 +78,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(206, $response->getStatusCode());
-        $this->assertEquals('bytes 300-171158/171159', $response->getHeaderLine('Content-Range'));
+        $this->assertRegexp('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
     }
 }

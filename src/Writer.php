@@ -32,7 +32,7 @@ class Writer extends Filesystem implements MiddlewareInterface
 
             $resource = $response->getBody()->detach();
 
-            if ($resource === false) {
+            if ($resource === null) {
                 throw new RuntimeException('Error on detach the stream body');
             }
 
