@@ -7,7 +7,10 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![SensioLabs Insight][ico-sensiolabs]][link-sensiolabs]
 
-Middleware to save or read responses from files. It uses [Flysystem](http://flysystem.thephpleague.com/) as filesystem handler, so you can use not only a local directories, but also any other adapter like [ftp](http://flysystem.thephpleague.com/adapter/ftp/), [sftp](http://flysystem.thephpleague.com/adapter/sftp/), [dropbox](http://flysystem.thephpleague.com/adapter/dropbox/), etc... This package includes two middleware components: `Reader` and `Writer`.
+Middleware to save or read responses from files. It uses [Flysystem](http://flysystem.thephpleague.com/) as filesystem handler, so you can use not only a local directories, but also any other adapter like [ftp](http://flysystem.thephpleague.com/adapter/ftp/), [sftp](http://flysystem.thephpleague.com/adapter/sftp/), [dropbox](http://flysystem.thephpleague.com/adapter/dropbox/), etc... This package includes the following components:
+
+* [Reader](#reader)
+* [Writer](#Writer)
 
 ## Requirements
 
@@ -32,40 +35,9 @@ To read the response body from a file under the following conditions:
 * It can handle gzipped files. For example, if `/post/23/index.html` does not exists but `/post/23/index.html.gz` is available and the request header `Accept-Encoding` contains `gzip`, returns it.
 * `Accept-Ranges` is also supported, useful to server big files like videos.
 
-```php
-$dispatcher = new Dispatcher([
-	new Middlewares\Reader(__DIR__.'/storage')
-]);
-
-$response = $dispatcher->dispatch(new Request());
-```
-
-## Writer
-
-Saves the response content into a file if all of the following conditions are met:
-
-* The method is `GET`
-* The status code is `200`
-* The `Cache-Control` header does not contain `no-cache` and `no-store`
-
-To be compatible with `Reader` behaviour:
-
-* If the request path has no extension, assume it's a directory and append `/index.html`. For example: if the request path is `/post/23`, the file saved is `/post/23/index.html`.
-* If the response is gzipped (has the header `Content-Encoding: gzip`) the file is saved with the extension .gz. For example `/post/23/index.html.gz` (instead `/post/23/index.html`).
-
-```php
-$dispatcher = new Dispatcher([
-    new Middlewares\Writer(__DIR__.'/storage')
-]);
-
-$response = $dispatcher->dispatch(new Request());
-```
-
-## Options
-
 #### `__construct(string|FilesystemInterface $filesystem)`
 
-Use a string to set the directory in which the files are stored. Or you can use also an instance of `League\Flysystem\FilesystemInterface`. Example using a ftp storage:
+Use a string to set the directory in which the files are placed. You can use also an instance of `League\Flysystem\FilesystemInterface`. Example using a ftp storage:
 
 ```php
 use League\Flysystem\Filesystem;
@@ -91,7 +63,7 @@ $response = $dispatcher->dispatch(new Request());
 
 #### `continueOnError(true)`
 
-**Only available in `Reader`**. Allows to continue to the next middleware on error (file not found, method not allowed, etc). This allows to create a simple caching system as the following:
+Allows to continue to the next middleware on error (file not found, method not allowed, etc). This allows to create a simple caching system as the following:
 
 ```php
 $cache = '/path/to/files';
@@ -108,6 +80,30 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new Request());
 ```
 
+## Writer
+
+Saves the response content into a file if all of the following conditions are met:
+
+* The method is `GET`
+* The status code is `200`
+* The `Cache-Control` header does not contain `no-cache` and `no-store`
+
+To be compatible with `Reader` behaviour:
+
+* If the request path has no extension, assume it's a directory and append `/index.html`. For example: if the request path is `/post/23`, the file saved is `/post/23/index.html`.
+* If the response is gzipped (has the header `Content-Encoding: gzip`) the file is saved with the extension .gz. For example `/post/23/index.html.gz` (instead `/post/23/index.html`).
+
+#### `__construct(string|FilesystemInterface $filesystem)`
+
+Use a string to set the storage directory. You can use also an instance of `League\Flysystem\FilesystemInterface`.
+
+```php
+$dispatcher = new Dispatcher([
+    new Middlewares\Writer(__DIR__.'/storage')
+]);
+
+$response = $dispatcher->dispatch(new Request());
+```
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.
