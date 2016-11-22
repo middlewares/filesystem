@@ -2,13 +2,13 @@
 
 namespace Middlewares;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Interop\Http\Middleware\MiddlewareInterface;
+use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Interop\Http\Middleware\DelegateInterface;
 use RuntimeException;
 
-class Reader extends Filesystem implements MiddlewareInterface
+class Reader extends Filesystem implements ServerMiddlewareInterface
 {
     /**
      * @var bool
@@ -32,12 +32,12 @@ class Reader extends Filesystem implements MiddlewareInterface
     /**
      * Process a request and return a response.
      *
-     * @param RequestInterface  $request
-     * @param DelegateInterface $delegate
+     * @param ServerRequestInterface $request
+     * @param DelegateInterface      $delegate
      *
      * @return ResponseInterface
      */
-    public function process(RequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         //Only GET methods are allowed
         if ($request->getMethod() !== 'GET') {
@@ -71,12 +71,12 @@ class Reader extends Filesystem implements MiddlewareInterface
     /**
      * Read a file and returns a stream.
      *
-     * @param RequestInterface $request
-     * @param string           $file
+     * @param ServerRequestInterface $request
+     * @param string                 $file
      *
      * @return StreamInterface
      */
-    private function read(RequestInterface $request, $file)
+    private function read(ServerRequestInterface $request, $file)
     {
         $resource = $this->filesystem->readStream($file);
 

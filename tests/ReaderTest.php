@@ -3,15 +3,16 @@
 namespace Middlewares\Tests;
 
 use Middlewares\Reader;
-use Zend\Diactoros\Request;
+use Middlewares\Utils\Dispatcher;
+use Middlewares\Utils\CallableMiddleware;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use mindplay\middleman\Dispatcher;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     public function testInvalidMethod()
     {
-        $request = new Request('/image.png', 'POST');
+        $request = new ServerRequest([], [], '/image.png', 'POST');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -23,7 +24,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testNotFound()
     {
-        $request = new Request('/not-found', 'GET');
+        $request = new ServerRequest([], [], '/not-found', 'GET');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -35,16 +36,16 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testContinueOnError()
     {
-        $request = new Request('/not-found', 'GET');
+        $request = new ServerRequest([], [], '/not-found', 'GET');
 
         $response = (new Dispatcher([
             (new Reader(__DIR__.'/assets'))->continueOnError(),
-            function () {
+            new CallableMiddleware(function () {
                 $response = new Response();
                 $response->getBody()->write('Fallback');
 
                 return $response;
-            },
+            }),
         ]))->dispatch($request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
@@ -54,7 +55,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testIndex()
     {
-        $request = new Request('/hello-world', 'GET');
+        $request = new ServerRequest([], [], '/hello-world', 'GET');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -69,7 +70,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testContentRange()
     {
-        $request = (new Request('/image.png', 'GET'))
+        $request = (new ServerRequest([], [], '/image.png', 'GET'))
             ->withHeader('Range', 'bytes=300-');
 
         $response = (new Dispatcher([

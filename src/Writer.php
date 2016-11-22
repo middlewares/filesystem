@@ -2,23 +2,23 @@
 
 namespace Middlewares;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Interop\Http\Middleware\MiddlewareInterface;
+use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Interop\Http\Middleware\DelegateInterface;
 use RuntimeException;
 
-class Writer extends Filesystem implements MiddlewareInterface
+class Writer extends Filesystem implements ServerMiddlewareInterface
 {
     /**
      * Process a request and return a response.
      *
-     * @param RequestInterface  $request
-     * @param DelegateInterface $delegate
+     * @param ServerRequestInterface $request
+     * @param DelegateInterface      $delegate
      *
      * @return ResponseInterface
      */
-    public function process(RequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         $response = $delegate->process($request);
 
@@ -47,12 +47,12 @@ class Writer extends Filesystem implements MiddlewareInterface
     /**
      * Check whether the response is writable or not.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
      *
      * @return bool
      */
-    private function isWritable(RequestInterface $request, ResponseInterface $response)
+    private function isWritable(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($request->getMethod() !== 'GET') {
             return false;
