@@ -4,15 +4,13 @@ namespace Middlewares\Tests;
 
 use Middlewares\Reader;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\CallableMiddleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
+use Middlewares\Utils\Factory;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
     public function testInvalidMethod()
     {
-        $request = new ServerRequest([], [], '/image.png', 'POST');
+        $request = Factory::createServerRequest([], 'POST', '/image.png');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -24,7 +22,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testNotFound()
     {
-        $request = new ServerRequest([], [], '/not-found', 'GET');
+        $request = Factory::createServerRequest([], 'GET', '/not-found');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -36,16 +34,13 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testContinueOnError()
     {
-        $request = new ServerRequest([], [], '/not-found', 'GET');
+        $request = Factory::createServerRequest([], 'GET', '/not-found');
 
         $response = (new Dispatcher([
             (new Reader(__DIR__.'/assets'))->continueOnError(),
-            new CallableMiddleware(function () {
-                $response = new Response();
-                $response->getBody()->write('Fallback');
-
-                return $response;
-            }),
+            function () {
+                echo 'Fallback';
+            },
         ]))->dispatch($request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
@@ -55,7 +50,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testIndex()
     {
-        $request = new ServerRequest([], [], '/hello-world', 'GET');
+        $request = Factory::createServerRequest([], 'GET', '/hello-world');
 
         $response = (new Dispatcher([
             new Reader(__DIR__.'/assets'),
@@ -70,7 +65,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testContentRange()
     {
-        $request = (new ServerRequest([], [], '/image.png', 'GET'))
+        $request = Factory::createServerRequest([], 'GET', '/image.png')
             ->withHeader('Range', 'bytes=300-');
 
         $response = (new Dispatcher([

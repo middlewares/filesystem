@@ -4,9 +4,7 @@ namespace Middlewares\Tests;
 
 use Middlewares\Writer;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\CallableMiddleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
+use Middlewares\Utils\Factory;
 
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,16 +14,13 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         self::rm($file);
 
-        $request = new ServerRequest([], [], '/tmp', 'GET');
+        $request = Factory::createServerRequest([], 'GET', '/tmp');
 
         $response = (new Dispatcher([
             new Writer(__DIR__.'/assets'),
-            new CallableMiddleware(function () {
-                $response = new Response();
-                $response->getBody()->write('Hello world');
-
-                return $response;
-            }),
+            function () {
+                echo 'Hello world';
+            },
         ]))->dispatch($request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
