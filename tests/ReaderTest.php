@@ -12,9 +12,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $request = Factory::createServerRequest([], 'POST', '/image.png');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             new Reader(__DIR__.'/assets'),
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(405, $response->getStatusCode());
@@ -24,9 +24,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $request = Factory::createServerRequest([], 'GET', '/not-found');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             new Reader(__DIR__.'/assets'),
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(404, $response->getStatusCode());
@@ -36,12 +36,12 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $request = Factory::createServerRequest([], 'GET', '/not-found');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             (new Reader(__DIR__.'/assets'))->continueOnError(),
             function () {
                 echo 'Fallback';
             },
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
@@ -52,9 +52,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $request = Factory::createServerRequest([], 'GET', '/hello-world');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             new Reader(__DIR__.'/assets'),
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
@@ -68,9 +68,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $request = Factory::createServerRequest([], 'GET', '/image.png')
             ->withHeader('Range', 'bytes=300-');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             new Reader(__DIR__.'/assets'),
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(206, $response->getStatusCode());

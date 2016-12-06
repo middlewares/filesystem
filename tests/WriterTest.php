@@ -16,12 +16,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $request = Factory::createServerRequest([], 'GET', '/tmp');
 
-        $response = (new Dispatcher([
+        $response = Dispatcher::run([
             new Writer(__DIR__.'/assets'),
             function () {
                 echo 'Hello world';
             },
-        ]))->dispatch($request);
+        ], $request);
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
