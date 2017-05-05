@@ -16,7 +16,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             new Reader(__DIR__.'/assets'),
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(405, $response->getStatusCode());
         $this->assertEquals('GET', $response->getHeaderLine('Allow'));
     }
@@ -29,7 +28,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             new Reader(__DIR__.'/assets'),
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(404, $response->getStatusCode());
     }
 
@@ -44,7 +42,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             },
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Fallback', (string) $response->getBody());
     }
@@ -57,7 +54,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             new Reader(__DIR__.'/assets'),
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
 
         $content = file_get_contents(__DIR__.'/assets/hello-world/index.html');
@@ -73,7 +69,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             new Reader(__DIR__.'/assets'),
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertRegexp('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
     }

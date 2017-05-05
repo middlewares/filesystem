@@ -23,7 +23,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             },
         ], $request);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue(is_file($file));
         $this->assertEquals(file_get_contents($file), (string) $response->getBody());
