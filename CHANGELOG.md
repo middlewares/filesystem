@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * `Middlewares\Reader` returns `Allow: GET` header in `405` responses
 
-## 0.3.0 - 2016-12-26
+## [0.3.0] - 2016-12-26
 
 ### Changed
 
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Updated to `http-interop/http-middleware#0.4`
 * Updated `friendsofphp/php-cs-fixer#2.0`
 
-## 0.2.0 - 2016-11-22
+## [0.2.0] - 2016-11-22
 
 ### Changed
 
@@ -27,3 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 0.1.0 - 2016-10-02
 
 First version
+
+[UNRELEASED]: https://github.com/middlewares/filesystem/compare/v0.3.0...master
+[0.3.0]: https://github.com/middlewares/filesystem/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/middlewares/filesystem/compare/v0.1.0...v0.2.0
