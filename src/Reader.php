@@ -45,7 +45,7 @@ class Reader extends Filesystem implements MiddlewareInterface
                 return $delegate->process($request);
             }
 
-            return Utils\Factory::createResponse(405);
+            return Utils\Factory::createResponse(405)->withHeader('Allow', 'GET');
         }
 
         $file = static::getFilename($request->getUri()->getPath());

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [UNRELEASED]
+
+### Fixed
+
+* `Middlewares\Reader` returns `Allow: GET` header in `405` responses
+
 ## 0.3.0 - 2016-12-26
 
 ### Changed

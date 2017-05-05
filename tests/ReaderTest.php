@@ -18,6 +18,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(405, $response->getStatusCode());
+        $this->assertEquals('GET', $response->getHeaderLine('Allow'));
     }
 
     public function testNotFound()
