@@ -2,11 +2,12 @@
 
 namespace Middlewares\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Middlewares\Reader;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 
-class ReaderTest extends \PHPUnit_Framework_TestCase
+class ReaderTest extends TestCase
 {
     public function testInvalidMethod()
     {

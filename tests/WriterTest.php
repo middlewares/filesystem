@@ -2,11 +2,12 @@
 
 namespace Middlewares\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Middlewares\Writer;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 
-class WriterTest extends \PHPUnit_Framework_TestCase
+class WriterTest extends TestCase
 {
     public function testIndex()
     {
