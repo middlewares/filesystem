@@ -2,10 +2,10 @@
 
 namespace Middlewares\Tests;
 
-use PHPUnit\Framework\TestCase;
-use Middlewares\Writer;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
+use Middlewares\Writer;
+use PHPUnit\Framework\TestCase;
 
 class WriterTest extends TestCase
 {

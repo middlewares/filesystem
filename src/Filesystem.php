@@ -2,10 +2,10 @@
 
 namespace Middlewares;
 
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\Filesystem as Flysystem;
-use League\Flysystem\Adapter\Local;
 use InvalidArgumentException;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Flysystem;
+use League\Flysystem\FilesystemInterface;
 
 abstract class Filesystem
 {
