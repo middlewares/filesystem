@@ -2,8 +2,8 @@
 
 namespace Middlewares;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -32,17 +32,17 @@ class Reader extends Filesystem implements MiddlewareInterface
     /**
      * Process a request and return a response.
      *
-     * @param ServerRequestInterface $request
-     * @param DelegateInterface      $delegate
+     * @param ServerRequestInterface  $request
+     * @param RequestHandlerInterface $handler
      *
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         //Only GET methods are allowed
         if ($request->getMethod() !== 'GET') {
             if ($this->continueOnError) {
-                return $delegate->process($request);
+                return $handler->handle($request);
             }
 
             return Utils\Factory::createResponse(405)->withHeader('Allow', 'GET');
@@ -59,7 +59,7 @@ class Reader extends Filesystem implements MiddlewareInterface
 
         if (stripos($request->getHeaderLine('Accept-Encoding'), 'gzip') === false || !$this->filesystem->has($file)) {
             if ($this->continueOnError) {
-                return $delegate->process($request);
+                return $handler->handle($request);
             }
 
             return Utils\Factory::createResponse(404);
