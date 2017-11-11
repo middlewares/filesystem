@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares;
 
@@ -12,13 +13,8 @@ class Writer extends Filesystem implements MiddlewareInterface
 {
     /**
      * Process a request and return a response.
-     *
-     * @param ServerRequestInterface  $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
 
@@ -46,13 +42,8 @@ class Writer extends Filesystem implements MiddlewareInterface
 
     /**
      * Check whether the response is writable or not.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     *
-     * @return bool
      */
-    private function isWritable(ServerRequestInterface $request, ResponseInterface $response)
+    private function isWritable(ServerRequestInterface $request, ResponseInterface $response): bool
     {
         if ($request->getMethod() !== 'GET') {
             return false;

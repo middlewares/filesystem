@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares;
 
@@ -17,12 +18,8 @@ class Reader extends Filesystem implements MiddlewareInterface
 
     /**
      * Configure if continue to the next middleware if the file is not found.
-     *
-     * @param bool $continueOnError
-     *
-     * @return self
      */
-    public function continueOnError($continueOnError = true)
+    public function continueOnError(bool $continueOnError = true): self
     {
         $this->continueOnError = $continueOnError;
 
@@ -31,13 +28,8 @@ class Reader extends Filesystem implements MiddlewareInterface
 
     /**
      * Process a request and return a response.
-     *
-     * @param ServerRequestInterface  $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         //Only GET methods are allowed
         if ($request->getMethod() !== 'GET') {
@@ -70,13 +62,8 @@ class Reader extends Filesystem implements MiddlewareInterface
 
     /**
      * Read a file and returns a stream.
-     *
-     * @param ServerRequestInterface $request
-     * @param string                 $file
-     *
-     * @return StreamInterface
      */
-    private function read(ServerRequestInterface $request, $file)
+    private function read(ServerRequestInterface $request, string $file): ResponseInterface
     {
         $resource = $this->filesystem->readStream($file);
 
@@ -91,13 +78,8 @@ class Reader extends Filesystem implements MiddlewareInterface
 
     /**
      * Handle range requests.
-     *
-     * @param ResponseInterface $response
-     * @param string            $range
-     *
-     * @return ResponseInterface
      */
-    private static function range(ResponseInterface $response, $range)
+    private static function range(ResponseInterface $response, string $range): ResponseInterface
     {
         $response = $response->withHeader('Accept-Ranges', 'bytes');
 
@@ -121,11 +103,9 @@ class Reader extends Filesystem implements MiddlewareInterface
     /**
      * Parses a range header, for example: bytes=500-999.
      *
-     * @param string $header
-     *
      * @return false|array [first, last]
      */
-    private static function parseRangeHeader($header)
+    private static function parseRangeHeader(string $header)
     {
         if (preg_match('/bytes=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
             return [

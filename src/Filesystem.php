@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares;
 
@@ -36,12 +37,8 @@ abstract class Filesystem
 
     /**
      * Resolve the filename of the response file.
-     *
-     * @param string $path
-     *
-     * @return string
      */
-    protected static function getFilename($path)
+    protected static function getFilename(string $path): string
     {
         $parts = pathinfo(urldecode($path));
         $path = isset($parts['dirname']) ? $parts['dirname'] : '';
