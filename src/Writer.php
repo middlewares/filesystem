@@ -29,7 +29,7 @@ class Writer extends Filesystem implements MiddlewareInterface
             $resource = $response->getBody()->detach();
 
             if ($resource === null) {
-                throw new RuntimeException('Error on detach the stream body');
+                throw new RuntimeException('Error on detach the stream body'); //@codeCoverageIgnore
             }
 
             $this->filesystem->writeStream($path, $resource);

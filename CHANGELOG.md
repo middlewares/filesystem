@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## UNRELEASED
+
+### Changed
+
+- changed the constructor signature: removed the ability to provide a string as a first argument.
+
+### Added
+
+- New static function `createFromDirectory` in `Reader` and `Writer` to create instances using a local directory
+
 ## [0.5.0] - 2017-11-13
 
 ### Changed

@@ -68,7 +68,7 @@ class Reader extends Filesystem implements MiddlewareInterface
         $resource = $this->filesystem->readStream($file);
 
         if ($resource === false) {
-            throw new RuntimeException(sprintf('Unable to read the file "%s"', $file));
+            throw new RuntimeException(sprintf('Unable to read the file "%s"', $file)); //@codeCoverageIgnore
         }
 
         $response = Utils\Factory::createResponse()->withBody(Utils\Factory::createStream($resource));

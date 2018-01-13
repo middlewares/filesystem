@@ -11,37 +11,74 @@ class ReaderTest extends TestCase
 {
     public function testInvalidMethod()
     {
-        $request = Factory::createServerRequest([], 'POST', '/image.png');
-
-        $response = Dispatcher::run([
-            new Reader(__DIR__.'/assets'),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'POST', '/image.png')
+        );
 
         $this->assertEquals(405, $response->getStatusCode());
         $this->assertEquals('GET', $response->getHeaderLine('Allow'));
     }
 
+    public function testGz()
+    {
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'GET', '/image2.png')
+                ->withHeader('Accept-Encoding', 'gzip')
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('gzip', $response->getHeaderLine('Content-Encoding'));
+    }
+
     public function testNotFound()
     {
-        $request = Factory::createServerRequest([], 'GET', '/not-found');
-
-        $response = Dispatcher::run([
-            new Reader(__DIR__.'/assets'),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'GET', '/not-found')
+        );
 
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    public function testContinueOnError()
+    public function testContinueOnNotFound()
     {
-        $request = Factory::createServerRequest([], 'GET', '/not-found');
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets')
+                    ->continueOnError(),
 
-        $response = Dispatcher::run([
-            (new Reader(__DIR__.'/assets'))->continueOnError(),
-            function () {
-                echo 'Fallback';
-            },
-        ], $request);
+                function () {
+                    echo 'Fallback';
+                },
+            ],
+            Factory::createServerRequest([], 'GET', '/not-found')
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Fallback', (string) $response->getBody());
+    }
+
+    public function testContinueOnInvalidMethod()
+    {
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets')
+                    ->continueOnError(),
+
+                function () {
+                    echo 'Fallback';
+                },
+            ],
+            Factory::createServerRequest([], 'POST', '/image.png')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Fallback', (string) $response->getBody());
@@ -49,11 +86,12 @@ class ReaderTest extends TestCase
 
     public function testIndex()
     {
-        $request = Factory::createServerRequest([], 'GET', '/hello-world');
-
-        $response = Dispatcher::run([
-            new Reader(__DIR__.'/assets'),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'GET', '/hello-world')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -63,14 +101,28 @@ class ReaderTest extends TestCase
 
     public function testContentRange()
     {
-        $request = Factory::createServerRequest([], 'GET', '/image.png')
-            ->withHeader('Range', 'bytes=300-');
-
-        $response = Dispatcher::run([
-            new Reader(__DIR__.'/assets'),
-        ], $request);
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'GET', '/image.png')
+                ->withHeader('Range', 'bytes=300-')
+        );
 
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertRegexp('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
+    }
+
+    public function testInvalidContentRange()
+    {
+        $response = Dispatcher::run(
+            [
+                Reader::createFromDirectory(__DIR__.'/assets'),
+            ],
+            Factory::createServerRequest([], 'GET', '/image.png')
+                ->withHeader('Range', 'xx=300-')
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }

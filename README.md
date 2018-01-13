@@ -26,6 +26,16 @@ This package is installable and autoloadable via Composer as [middlewares/filesy
 composer require middlewares/filesystem
 ```
 
+## Example
+
+```php
+$dispatcher = new Dispatcher([
+    Middlewares\Reader::createFromDirectory(__DIR__.'/assets')
+]);
+
+$response = $dispatcher->dispatch(new ServerRequest());
+```
+
 ## Reader
 
 To read the response body from a file under the following conditions:
@@ -35,9 +45,9 @@ To read the response body from a file under the following conditions:
 * It can handle gzipped files. For example, if `/post/23/index.html` does not exists but `/post/23/index.html.gz` is available and the request header `Accept-Encoding` contains `gzip`, returns it.
 * `Accept-Ranges` is also supported, useful to server big files like videos.
 
-#### `__construct(string|FilesystemInterface $filesystem)`
+#### `__construct(League\Flysystem\FilesystemInterface $filesystem)`
 
-Use a string to set the directory in which the files are placed. You can use also an instance of `League\Flysystem\FilesystemInterface`. Example using a ftp storage:
+Set the filesystem manager. Example using a ftp storage:
 
 ```php
 use League\Flysystem\Filesystem;
@@ -93,17 +103,33 @@ To be compatible with `Reader` behaviour:
 * If the request path has no extension, assume it's a directory and append `/index.html`. For example: if the request path is `/post/23`, the file saved is `/post/23/index.html`.
 * If the response is gzipped (has the header `Content-Encoding: gzip`) the file is saved with the extension .gz. For example `/post/23/index.html.gz` (instead `/post/23/index.html`).
 
-#### `__construct(string|FilesystemInterface $filesystem)`
+#### `__construct(League\Flysystem\FilesystemInterface $filesystem)`
 
-Use a string to set the storage directory. You can use also an instance of `League\Flysystem\FilesystemInterface`.
+Set the filesystem manager.
 
 ```php
+$filesystem = new Flysystem(new Local(__DIR__.'/storage'));
+
 $dispatcher = new Dispatcher([
-    new Middlewares\Writer(__DIR__.'/storage')
+    new Middlewares\Writer($filesystem)
 ]);
 
 $response = $dispatcher->dispatch(new ServerRequest());
 ```
+
+## Helpers
+
+#### `createFromDirectory(string $path)`
+
+Both `Reader` and `Writer` have a static method as a shortcut to create instances using a directory in the local filesystem, due this is the most common case:
+
+```php
+$dispatcher = new Dispatcher([
+    Middlewares\Writer::createFromDirectory(__DIR__.'/assets')
+    Middlewares\Reader::createFromDirectory(__DIR__.'/assets')
+]);
+```
+
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.

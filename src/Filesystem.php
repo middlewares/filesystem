@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use InvalidArgumentException;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\FilesystemInterface;
@@ -15,23 +14,20 @@ abstract class Filesystem
      */
     protected $filesystem;
 
+    public static function createFromDirectory(string $path): self
+    {
+        $filesystem = new Flysystem(new Local($path));
+
+        return new static($filesystem);
+    }
+
     /**
      * Configure the root of the filesystem.
      *
-     * @param string|FilesystemInterface $filesystem
+     * @param FilesystemInterface $filesystem
      */
-    public function __construct($filesystem)
+    public function __construct(FilesystemInterface $filesystem)
     {
-        if (is_string($filesystem)) {
-            $filesystem = new Flysystem(new Local($filesystem));
-        }
-
-        if (!($filesystem instanceof FilesystemInterface)) {
-            throw new InvalidArgumentException(
-                sprintf('The first argument must be a string or an instance of %s', FilesystemInterface::class)
-            );
-        }
-
         $this->filesystem = $filesystem;
     }
 
