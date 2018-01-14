@@ -7,13 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
-### Changed
-
-- changed the constructor signature: removed the ability to provide a string as a first argument.
-
 ### Added
 
 - New static function `createFromDirectory` in `Reader` and `Writer` to create instances using a local directory
+- Improved testing and added code coverage reporting
+- Added tests for PHP 7.2
+
+### Fixed
+
+- Updated license year
+
+### Changed
+
+- changed the constructor signature: removed the ability to provide a string as a first argument.
 
 ## [0.5.0] - 2017-11-13
 
