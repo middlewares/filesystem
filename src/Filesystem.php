@@ -9,9 +9,6 @@ use League\Flysystem\FilesystemInterface;
 
 abstract class Filesystem
 {
-    /**
-     * @var FilesystemInterface
-     */
     protected $filesystem;
 
     public static function createFromDirectory(string $path): self
@@ -23,8 +20,6 @@ abstract class Filesystem
 
     /**
      * Configure the root of the filesystem.
-     *
-     * @param FilesystemInterface $filesystem
      */
     public function __construct(FilesystemInterface $filesystem)
     {
