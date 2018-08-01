@@ -90,6 +90,14 @@ $dispatcher = new Dispatcher([
 $response = $dispatcher->dispatch(new ServerRequest());
 ```
 
+#### `responseFactory(Psr\Http\Message\ResponseFactoryInterface $responseFactory)`
+
+A PSR-17 factory to create the responses.
+
+#### `streamFactory(Psr\Http\Message\StreamFactoryInterface $streamFactory)`
+
+A PSR-17 factory to create the new response bodies.
+
 ## Writer
 
 Saves the response content into a file if all of the following conditions are met:
@@ -116,6 +124,10 @@ $dispatcher = new Dispatcher([
 
 $response = $dispatcher->dispatch(new ServerRequest());
 ```
+
+#### `streamFactory(Psr\Http\Message\StreamFactoryInterface $streamFactory)`
+
+A PSR-17 factory to create the new response bodies.
 
 ## Helpers
 

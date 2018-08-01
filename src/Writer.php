@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
+use Middlewares\Utils\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,7 +35,9 @@ class Writer extends Filesystem implements MiddlewareInterface
 
             $this->filesystem->writeStream($path, $resource);
 
-            return $response->withBody(Utils\Factory::createStream($resource));
+            $streamFactory = $this->streamFactory ?: Factory::getStreamFactory();
+
+            return $response->withBody($streamFactory->createStreamFromResource($resource));
         }
 
         return $response;

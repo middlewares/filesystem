@@ -15,7 +15,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'POST', '/image.png')
+            Factory::createServerRequest('POST', '/image.png')
         );
 
         $this->assertEquals(405, $response->getStatusCode());
@@ -28,7 +28,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'GET', '/image2.png')
+            Factory::createServerRequest('GET', '/image2.png')
                 ->withHeader('Accept-Encoding', 'gzip')
         );
 
@@ -42,7 +42,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'GET', '/not-found')
+            Factory::createServerRequest('GET', '/not-found')
         );
 
         $this->assertEquals(404, $response->getStatusCode());
@@ -59,7 +59,7 @@ class ReaderTest extends TestCase
                     echo 'Fallback';
                 },
             ],
-            Factory::createServerRequest([], 'GET', '/not-found')
+            Factory::createServerRequest('GET', '/not-found')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -77,7 +77,7 @@ class ReaderTest extends TestCase
                     echo 'Fallback';
                 },
             ],
-            Factory::createServerRequest([], 'POST', '/image.png')
+            Factory::createServerRequest('POST', '/image.png')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -90,7 +90,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'GET', '/hello-world')
+            Factory::createServerRequest('GET', '/hello-world')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -105,7 +105,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'GET', '/image.png')
+            Factory::createServerRequest('GET', '/image.png')
                 ->withHeader('Range', 'bytes=300-')
         );
 
@@ -119,7 +119,7 @@ class ReaderTest extends TestCase
             [
                 Reader::createFromDirectory(__DIR__.'/assets'),
             ],
-            Factory::createServerRequest([], 'GET', '/image.png')
+            Factory::createServerRequest('GET', '/image.png')
                 ->withHeader('Range', 'xx=300-')
         );
 

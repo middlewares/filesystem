@@ -22,7 +22,7 @@ class WriterTest extends TestCase
                     echo 'Hello world';
                 },
             ],
-            Factory::createServerRequest([], 'GET', '/tmp')
+            Factory::createServerRequest('GET', '/tmp')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -48,7 +48,7 @@ class WriterTest extends TestCase
                         ->withHeader('Content-Encoding', 'gzip');
                 },
             ],
-            Factory::createServerRequest([], 'GET', '/tmp')
+            Factory::createServerRequest('GET', '/tmp')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -71,7 +71,7 @@ class WriterTest extends TestCase
                     echo 'Hello world';
                 },
             ],
-            Factory::createServerRequest([], 'POST', '/tmp')
+            Factory::createServerRequest('POST', '/tmp')
         );
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -93,7 +93,7 @@ class WriterTest extends TestCase
                     return Factory::createResponse(500);
                 },
             ],
-            Factory::createServerRequest([], 'GET', '/tmp')
+            Factory::createServerRequest('GET', '/tmp')
         );
 
         $this->assertEquals(500, $response->getStatusCode());
@@ -118,7 +118,7 @@ class WriterTest extends TestCase
                         ->withHeader('Cache-Control', 'no-cache');
                 },
             ],
-            Factory::createServerRequest([], 'GET', '/tmp')
+            Factory::createServerRequest('GET', '/tmp')
         );
 
         $this->assertEquals(200, $response->getStatusCode());

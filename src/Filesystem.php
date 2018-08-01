@@ -6,10 +6,16 @@ namespace Middlewares;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\FilesystemInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 abstract class Filesystem
 {
     protected $filesystem;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
 
     public static function createFromDirectory(string $path): self
     {
@@ -24,6 +30,15 @@ abstract class Filesystem
     public function __construct(FilesystemInterface $filesystem)
     {
         $this->filesystem = $filesystem;
+    }
+
+    /**
+     * Set the stream factory used.
+     */
+    public function streamFactory(StreamFactoryInterface $streamFactory): self
+    {
+        $this->streamFactory = $streamFactory;
+        return $this;
     }
 
     /**
