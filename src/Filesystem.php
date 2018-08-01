@@ -15,7 +15,7 @@ abstract class Filesystem
     /**
      * @var StreamFactoryInterface
      */
-    private $streamFactory;
+    protected $streamFactory;
 
     public static function createFromDirectory(string $path): self
     {
