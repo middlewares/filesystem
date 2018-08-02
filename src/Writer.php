@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Middlewares\Utils\Factory;
+use Middlewares\Utils\Traits\HasStreamFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -12,6 +12,8 @@ use RuntimeException;
 
 class Writer extends Filesystem implements MiddlewareInterface
 {
+    use HasStreamFactory;
+
     /**
      * Process a request and return a response.
      */
@@ -35,9 +37,7 @@ class Writer extends Filesystem implements MiddlewareInterface
 
             $this->filesystem->writeStream($path, $resource);
 
-            $streamFactory = $this->streamFactory ?: Factory::getStreamFactory();
-
-            return $response->withBody($streamFactory->createStreamFromResource($resource));
+            return $response->withBody($this->createStreamFromResource($resource));
         }
 
         return $response;
