@@ -9,12 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- New option `streamFactory` to configure a custom factory implementing `Psr\Http\Message\StreamFactoryInterface`
-- New option `responseFactory` (only in `Reader`) to configure a custom factory implementing `Psr\Http\Message\ResponseFactoryInterface`
-
-### Changed
-
-- Upgrade dev dependencies
+- PSR-17 support
+- New option `responseFactory` in `Reader`
+- New option `streamFactory` in `Reader` and `Writer`
 
 ## [1.0.0] - 2017-01-25
 
