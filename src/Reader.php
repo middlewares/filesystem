@@ -5,10 +5,14 @@ namespace Middlewares;
 
 use Middlewares\Utils\Traits\HasResponseFactory;
 use Middlewares\Utils\Traits\HasStreamFactory;
+use Middlewares\Utils\Factory;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use League\Flysystem\FilesystemInterface;
 use RuntimeException;
 
 class Reader extends Filesystem implements MiddlewareInterface
@@ -16,10 +20,30 @@ class Reader extends Filesystem implements MiddlewareInterface
     use HasResponseFactory;
     use HasStreamFactory;
 
+    protected $filesystem;
+
+    public static function createFromDirectory(
+        string $path,
+        ResponseFactoryInterface $responseFactory = null,
+        StreamFactoryInterface $streamFactory = null
+    ): self {
+        return new static(static::createLocalFlysystem($path), $responseFactory, $streamFactory);
+    }
+
     /**
      * @var bool
      */
     private $continueOnError = false;
+
+    public function __construct(
+        FilesystemInterface $filesystem,
+        ResponseFactoryInterface $responseFactory = null,
+        StreamFactoryInterface $streamFactory = null
+    ) {
+        $this->filesystem = $filesystem;
+        $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
+        $this->streamFactory = $streamFactory ?: Factory::getStreamFactory();
+    }
 
     /**
      * Configure if continue to the next middleware if the file is not found.

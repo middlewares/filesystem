@@ -4,15 +4,35 @@ declare(strict_types = 1);
 namespace Middlewares;
 
 use Middlewares\Utils\Traits\HasStreamFactory;
+use Middlewares\Utils\Factory;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use League\Flysystem\FilesystemInterface;
 use RuntimeException;
 
 class Writer extends Filesystem implements MiddlewareInterface
 {
     use HasStreamFactory;
+
+    protected $filesystem;
+
+    public static function createFromDirectory(
+        string $path,
+        StreamFactoryInterface $streamFactory = null
+    ): self {
+        return new static(static::createLocalFlysystem($path), $streamFactory);
+    }
+
+    public function __construct(
+        FilesystemInterface $filesystem,
+        StreamFactoryInterface $streamFactory = null
+    ) {
+        $this->filesystem = $filesystem;
+        $this->streamFactory = $streamFactory ?: Factory::getStreamFactory();
+    }
 
     /**
      * Process a request and return a response.

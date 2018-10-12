@@ -9,21 +9,9 @@ use League\Flysystem\FilesystemInterface;
 
 abstract class Filesystem
 {
-    protected $filesystem;
-
-    public static function createFromDirectory(string $path): self
+    protected static function createLocalFlysystem(string $path): Flysystem
     {
-        $filesystem = new Flysystem(new Local($path));
-
-        return new static($filesystem);
-    }
-
-    /**
-     * Configure the root of the filesystem.
-     */
-    public function __construct(FilesystemInterface $filesystem)
-    {
-        $this->filesystem = $filesystem;
+        return new Flysystem(new Local($path));
     }
 
     /**
