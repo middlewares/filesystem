@@ -78,15 +78,15 @@ $reader = new Middlewares\Reader($filesystem, $responseFactory, $streamFactory);
 Allows to continue to the next middleware on error (file not found, method not allowed, etc). This allows to create a simple caching system as the following:
 
 ```php
-$cache = '/path/to/files';
+$cache = new Flysystem(new Local(__DIR__.'/path/to/files'));
 
 Dispatcher::run([
-    Middlewares\Reader::createFromDirectory($cache)      //read and returns the cached response...
-        ->continueOnError(),                             //...but continue if the file does not exists
+    (new Middlewares\Reader($cache))    //read and returns the cached response...
+        ->continueOnError(),            //...but continue if the file does not exists
 
-    Middlewares\Writer::createFromDirectory($cache),     //save the response in the cache
+    new Middlewares\Writer($cache),     //save the response in the cache
 
-    Middlewares\AuraRouter::createFromDirectory($route), //create a response using, for example, Aura.Router
+    new Middlewares\AuraRouter($route), //create a response using, for example, Aura.Router
 ]);
 ```
 
