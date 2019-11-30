@@ -3,20 +3,17 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Middlewares\Utils\Traits\HasStreamFactory;
+use League\Flysystem\FilesystemInterface;
 use Middlewares\Utils\Factory;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use League\Flysystem\FilesystemInterface;
 use RuntimeException;
 
 class Writer extends Filesystem implements MiddlewareInterface
 {
-    use HasStreamFactory;
-
     protected $filesystem;
 
     public static function createFromDirectory(
@@ -52,12 +49,12 @@ class Writer extends Filesystem implements MiddlewareInterface
             $resource = $response->getBody()->detach();
 
             if ($resource === null) {
-                throw new RuntimeException('Error on detach the stream body'); //@codeCoverageIgnore
+                throw new RuntimeException('Error on detach the stream body');
             }
 
             $this->filesystem->writeStream($path, $resource);
 
-            return $response->withBody($this->createStreamFromResource($resource));
+            return $response->withBody($this->streamFactory->createStreamFromResource($resource));
         }
 
         return $response;

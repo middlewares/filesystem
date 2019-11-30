@@ -3,24 +3,37 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Middlewares\Utils\Traits\HasResponseFactory;
-use Middlewares\Utils\Traits\HasStreamFactory;
+use League\Flysystem\FilesystemInterface;
 use Middlewares\Utils\Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use League\Flysystem\FilesystemInterface;
 use RuntimeException;
 
 class Reader extends Filesystem implements MiddlewareInterface
 {
-    use HasResponseFactory;
-    use HasStreamFactory;
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
 
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
+
+    /**
+     * @var FilesystemInterface
+     */
     protected $filesystem;
+
+    /**
+     * @var bool
+     */
+    private $continueOnError = false;
 
     public static function createFromDirectory(
         string $path,
@@ -29,11 +42,6 @@ class Reader extends Filesystem implements MiddlewareInterface
     ): self {
         return new static(static::createLocalFlysystem($path), $responseFactory, $streamFactory);
     }
-
-    /**
-     * @var bool
-     */
-    private $continueOnError = false;
 
     public function __construct(
         FilesystemInterface $filesystem,
@@ -66,7 +74,7 @@ class Reader extends Filesystem implements MiddlewareInterface
                 return $handler->handle($request);
             }
 
-            return $this->createResponse(405)->withHeader('Allow', 'GET');
+            return $this->responseFactory->createResponse(405)->withHeader('Allow', 'GET');
         }
 
         $file = static::getFilename($request->getUri()->getPath());
@@ -83,7 +91,7 @@ class Reader extends Filesystem implements MiddlewareInterface
                 return $handler->handle($request);
             }
 
-            return $this->createResponse(404);
+            return $this->responseFactory->createResponse(404);
         }
 
         return $this->read($request, $file)->withHeader('Content-Encoding', 'gzip');
@@ -100,7 +108,8 @@ class Reader extends Filesystem implements MiddlewareInterface
             throw new RuntimeException(sprintf('Unable to read the file "%s"', $file)); //@codeCoverageIgnore
         }
 
-        $response = $this->createResponse()->withBody($this->createStreamFromResource($resource));
+        $stream = $this->streamFactory->createStreamFromResource($resource);
+        $response = $this->responseFactory->createResponse()->withBody($stream);
 
         return self::range($response, $request->getHeaderLine('Range'));
     }

@@ -5,7 +5,6 @@
 [![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-scrutinizer]][link-scrutinizer]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![SensioLabs Insight][ico-sensiolabs]][link-sensiolabs]
 
 Middleware to save or read responses from files. It uses [Flysystem](http://flysystem.thephpleague.com/) as filesystem handler, so you can use not only a local directories, but also any other adapter like [ftp](http://flysystem.thephpleague.com/adapter/ftp/), [sftp](http://flysystem.thephpleague.com/adapter/sftp/), [dropbox](http://flysystem.thephpleague.com/adapter/dropbox/), etc... This package includes the following components:
 
@@ -14,7 +13,7 @@ Middleware to save or read responses from files. It uses [Flysystem](http://flys
 
 ## Requirements
 
-* PHP >= 7.0
+* PHP >= 7.2
 * A [PSR-7 http library](https://github.com/middlewares/awesome-psr15-middlewares#psr-7-implementations)
 * A [PSR-15 middleware dispatcher](https://github.com/middlewares/awesome-psr15-middlewares#dispatcher)
 
@@ -29,11 +28,9 @@ composer require middlewares/filesystem
 ## Example
 
 ```php
-$dispatcher = new Dispatcher([
+Dispatcher::run([
     Middlewares\Reader::createFromDirectory(__DIR__.'/assets')
 ]);
-
-$response = $dispatcher->dispatch(new ServerRequest());
 ```
 
 ## Reader
@@ -45,9 +42,7 @@ To read the response body from a file under the following conditions:
 * It can handle gzipped files. For example, if `/post/23/index.html` does not exists but `/post/23/index.html.gz` is available and the request header `Accept-Encoding` contains `gzip`, returns it.
 * `Accept-Ranges` is also supported, useful to server big files like videos.
 
-#### `__construct(League\Flysystem\FilesystemInterface $filesystem)`
-
-Set the filesystem manager. Example using a ftp storage:
+Example using a ftp storage:
 
 ```php
 use League\Flysystem\Filesystem;
@@ -64,21 +59,28 @@ $filesystem = new Filesystem(new Ftp([
     'timeout' => 30,
 ]));
 
-$dispatcher = new Dispatcher([
+Dispatcher::run([
     new Middlewares\Reader($filesystem)
 ]);
-
-$response = $dispatcher->dispatch(new ServerRequest());
 ```
 
-#### `continueOnError(true)`
+Optionally, you can provide a `Psr\Http\Message\ResponseFactoryInterface` and `Psr\Http\Message\StreamFactoryInterface`, that will be used to create the response and stream. If they are not not defined, [Middleware\Utils\Factory](https://github.com/middlewares/utils#factory) will be used to detect them automatically.
+
+```php
+$responseFactory = new MyOwnResponseFactory();
+$streamFactory = new MyOwnStreamFactory();
+
+$reader = new Middlewares\Reader($filesystem, $responseFactory, $streamFactory);
+```
+
+### continueOnError
 
 Allows to continue to the next middleware on error (file not found, method not allowed, etc). This allows to create a simple caching system as the following:
 
 ```php
 $cache = '/path/to/files';
 
-$dispatcher = new Dispatcher([
+Dispatcher::run([
     (new Middlewares\Reader($cache))    //read and returns the cached response...
         ->continueOnError(),            //...but continue if the file does not exists
 
@@ -86,17 +88,7 @@ $dispatcher = new Dispatcher([
 
     new Middlewares\AuraRouter($route), //create a response using, for example, Aura.Router
 ]);
-
-$response = $dispatcher->dispatch(new ServerRequest());
 ```
-
-#### `responseFactory(Psr\Http\Message\ResponseFactoryInterface $responseFactory)`
-
-A PSR-17 factory to create the responses.
-
-#### `streamFactory(Psr\Http\Message\StreamFactoryInterface $streamFactory)`
-
-A PSR-17 factory to create the response bodies.
 
 ## Writer
 
@@ -111,32 +103,30 @@ To be compatible with `Reader` behaviour:
 * If the request path has no extension, assume it's a directory and append `/index.html`. For example: if the request path is `/post/23`, the file saved is `/post/23/index.html`.
 * If the response is gzipped (has the header `Content-Encoding: gzip`) the file is saved with the extension .gz. For example `/post/23/index.html.gz` (instead `/post/23/index.html`).
 
-#### `__construct(League\Flysystem\FilesystemInterface $filesystem)`
-
-Set the filesystem manager.
-
 ```php
 $filesystem = new Flysystem(new Local(__DIR__.'/storage'));
 
-$dispatcher = new Dispatcher([
+Dispatcher::run([
     new Middlewares\Writer($filesystem)
 ]);
-
-$response = $dispatcher->dispatch(new ServerRequest());
 ```
 
-#### `streamFactory(Psr\Http\Message\StreamFactoryInterface $streamFactory)`
+Optionally, you can provide a `Psr\Http\Message\StreamFactoryInterface` as the second that will be used to create a new body to the response. If it's not defined, [Middleware\Utils\Factory](https://github.com/middlewares/utils#factory) will be used to detect it automatically.
 
-A PSR-17 factory to create the response bodies.
+```php
+$streamFactory = new MyOwnStreamFactory();
+
+$reader = new Middlewares\Writer($filesystem, $streamFactory);
+```
 
 ## Helpers
 
-#### `createFromDirectory(string $path)`
+### createFromDirectory
 
 Both `Reader` and `Writer` have a static method as a shortcut to create instances using a directory in the local filesystem, due this is the most common case:
 
 ```php
-$dispatcher = new Dispatcher([
+Dispatcher::run([
     Middlewares\Writer::createFromDirectory(__DIR__.'/assets')
     Middlewares\Reader::createFromDirectory(__DIR__.'/assets')
 ]);
@@ -153,10 +143,8 @@ The MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
 [ico-travis]: https://img.shields.io/travis/middlewares/filesystem/master.svg?style=flat-square
 [ico-scrutinizer]: https://img.shields.io/scrutinizer/g/middlewares/filesystem.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/middlewares/filesystem.svg?style=flat-square
-[ico-sensiolabs]: https://img.shields.io/sensiolabs/i/48561559-323f-459d-8ed8-5d7ba81f5652.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/middlewares/filesystem
 [link-travis]: https://travis-ci.org/middlewares/filesystem
 [link-scrutinizer]: https://scrutinizer-ci.com/g/middlewares/filesystem
 [link-downloads]: https://packagist.org/packages/middlewares/filesystem
-[link-sensiolabs]: https://insight.sensiolabs.com/projects/48561559-323f-459d-8ed8-5d7ba81f5652
