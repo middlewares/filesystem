@@ -81,12 +81,12 @@ Allows to continue to the next middleware on error (file not found, method not a
 $cache = '/path/to/files';
 
 Dispatcher::run([
-    (new Middlewares\Reader($cache))    //read and returns the cached response...
-        ->continueOnError(),            //...but continue if the file does not exists
+    Middlewares\Reader::createFromDirectory($cache)      //read and returns the cached response...
+        ->continueOnError(),                             //...but continue if the file does not exists
 
-    new Middlewares\Writer($cache),     //save the response in the cache
+    Middlewares\Writer::createFromDirectory($cache),     //save the response in the cache
 
-    new Middlewares\AuraRouter($route), //create a response using, for example, Aura.Router
+    Middlewares\AuraRouter::createFromDirectory($route), //create a response using, for example, Aura.Router
 ]);
 ```
 

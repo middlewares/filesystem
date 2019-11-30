@@ -14,7 +14,10 @@ use RuntimeException;
 
 class Writer extends Filesystem implements MiddlewareInterface
 {
-    protected $filesystem;
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
 
     public static function createFromDirectory(
         string $path,

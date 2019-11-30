@@ -26,11 +26,6 @@ class Reader extends Filesystem implements MiddlewareInterface
     private $streamFactory;
 
     /**
-     * @var FilesystemInterface
-     */
-    protected $filesystem;
-
-    /**
      * @var bool
      */
     private $continueOnError = false;
