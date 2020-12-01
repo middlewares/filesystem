@@ -110,7 +110,7 @@ class ReaderTest extends TestCase
         );
 
         $this->assertEquals(206, $response->getStatusCode());
-        $this->assertRegexp('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
+        $this->assertMatchesRegularExpression('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
     }
 
     public function testInvalidContentRange()
