@@ -25,9 +25,9 @@ class WriterTest extends TestCase
             Factory::createServerRequest('GET', '/tmp')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue(is_file($file));
-        $this->assertEquals(file_get_contents($file), (string) $response->getBody());
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertTrue(is_file($file));
+        self::assertEquals(file_get_contents($file), (string) $response->getBody());
 
         self::rm($file);
     }
@@ -51,9 +51,9 @@ class WriterTest extends TestCase
             Factory::createServerRequest('GET', '/tmp')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertTrue(is_file($file));
-        $this->assertEquals(file_get_contents($file), (string) $response->getBody());
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertTrue(is_file($file));
+        self::assertEquals(file_get_contents($file), (string) $response->getBody());
 
         self::rm($file);
     }
@@ -74,8 +74,8 @@ class WriterTest extends TestCase
             Factory::createServerRequest('POST', '/tmp')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertFalse(is_file($file));
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertFalse(is_file($file));
 
         self::rm($file);
     }
@@ -96,8 +96,8 @@ class WriterTest extends TestCase
             Factory::createServerRequest('GET', '/tmp')
         );
 
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertFalse(is_file($file));
+        self::assertEquals(500, $response->getStatusCode());
+        self::assertFalse(is_file($file));
 
         self::rm($file);
     }
@@ -121,8 +121,8 @@ class WriterTest extends TestCase
             Factory::createServerRequest('GET', '/tmp')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertFalse(is_file($file));
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertFalse(is_file($file));
 
         self::rm($file);
     }

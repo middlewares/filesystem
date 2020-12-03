@@ -9,6 +9,19 @@ use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
 {
+    /**
+     * phpunit 8 support
+     */
+    public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+    {
+        if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
+            parent::assertMatchesRegularExpression($pattern, $string, $message);
+            return;
+        }
+
+        self::assertRegExp($pattern, $string, $message);
+    }
+
     public function testInvalidMethod()
     {
         $response = Dispatcher::run(
@@ -18,8 +31,8 @@ class ReaderTest extends TestCase
             Factory::createServerRequest('POST', '/image.png')
         );
 
-        $this->assertEquals(405, $response->getStatusCode());
-        $this->assertEquals('GET', $response->getHeaderLine('Allow'));
+        self::assertEquals(405, $response->getStatusCode());
+        self::assertEquals('GET', $response->getHeaderLine('Allow'));
     }
 
     public function testGz()
@@ -32,8 +45,8 @@ class ReaderTest extends TestCase
                 ->withHeader('Accept-Encoding', 'gzip')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('gzip', $response->getHeaderLine('Content-Encoding'));
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('gzip', $response->getHeaderLine('Content-Encoding'));
     }
 
     public function testNotFound()
@@ -45,7 +58,7 @@ class ReaderTest extends TestCase
             Factory::createServerRequest('GET', '/not-found')
         );
 
-        $this->assertEquals(404, $response->getStatusCode());
+        self::assertEquals(404, $response->getStatusCode());
     }
 
     public function testContinueOnNotFound()
@@ -62,8 +75,8 @@ class ReaderTest extends TestCase
             Factory::createServerRequest('GET', '/not-found')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('Fallback', (string) $response->getBody());
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('Fallback', (string) $response->getBody());
     }
 
     public function testContinueOnInvalidMethod()
@@ -80,8 +93,8 @@ class ReaderTest extends TestCase
             Factory::createServerRequest('POST', '/image.png')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('Fallback', (string) $response->getBody());
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('Fallback', (string) $response->getBody());
     }
 
     public function testIndex()
@@ -93,10 +106,10 @@ class ReaderTest extends TestCase
             Factory::createServerRequest('GET', '/hello-world')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
 
         $content = file_get_contents(__DIR__.'/assets/hello-world/index.html');
-        $this->assertEquals($content, (string) $response->getBody());
+        self::assertEquals($content, (string) $response->getBody());
     }
 
     public function testContentRange()
@@ -109,8 +122,8 @@ class ReaderTest extends TestCase
                 ->withHeader('Range', 'bytes=300-')
         );
 
-        $this->assertEquals(206, $response->getStatusCode());
-        $this->assertMatchesRegularExpression('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
+        self::assertEquals(206, $response->getStatusCode());
+        self::assertMatchesRegularExpression('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
     }
 
     public function testInvalidContentRange()
@@ -123,6 +136,6 @@ class ReaderTest extends TestCase
                 ->withHeader('Range', 'xx=300-')
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 }
