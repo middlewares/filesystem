@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0] - 2020-12-03
+### Changed
+- Updated `league/filesystem` to version 2 for php 7.2, 7.3 and 7.4, and to version 3 for >= php 8.0.
+- With these changes, a breaking change is introduced by `league/filesystem`. Now you have to pass a FilesystemOperator interface compliant class to the middlewares. Check README's code examples.
+
 ## [2.0.1] - 2020-12-03
 ### Added
 - Support for PHP 8.0
@@ -69,6 +74,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 0.1.0 - 2016-10-02
 First version
 
+[3.0.0]: https://github.com/middlewares/filesystem/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/middlewares/filesystem/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/middlewares/filesystem/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/middlewares/filesystem/compare/v1.0.0...v1.1.0
