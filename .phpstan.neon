@@ -1,0 +1,12 @@
+parameters:
+    reportUnmatchedIgnoredErrors: false
+    inferPrivatePropertyTypeFromConstructor: true
+    level: 8
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        -
+            identifier: 'function.alreadyNarrowedType'
+            reportUnmatched: false
+        - "#^Unsafe usage of new static#"

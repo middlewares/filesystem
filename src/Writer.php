@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Middlewares\Utils\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,14 +21,15 @@ class Writer extends Filesystem implements MiddlewareInterface
 
     public static function createFromDirectory(
         string $path,
-        StreamFactoryInterface $streamFactory = null
+        ?StreamFactoryInterface $streamFactory = null
     ): self {
+        /* @note We use static so that other classes can extend it and get the expected behaviour */
         return new static(static::createLocalFlysystem($path), $streamFactory);
     }
 
     public function __construct(
-        FilesystemInterface $filesystem,
-        StreamFactoryInterface $streamFactory = null
+        FilesystemOperator $filesystem,
+        ?StreamFactoryInterface $streamFactory = null
     ) {
         $this->filesystem = $filesystem;
         $this->streamFactory = $streamFactory ?: Factory::getStreamFactory();

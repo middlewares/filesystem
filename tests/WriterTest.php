@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Middlewares\Tests;
 
 use Middlewares\Utils\Dispatcher;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class WriterTest extends TestCase
 {
-    public function testIndex()
+    public function testIndex(): void
     {
         $file = __DIR__.'/assets/tmp/index.html';
 
@@ -32,7 +34,7 @@ class WriterTest extends TestCase
         self::rm($file);
     }
 
-    public function testGzIndex()
+    public function testGzIndex(): void
     {
         $file = __DIR__.'/assets/tmp/index.html.gz';
 
@@ -58,7 +60,7 @@ class WriterTest extends TestCase
         self::rm($file);
     }
 
-    public function testPost()
+    public function testPost(): void
     {
         $file = __DIR__.'/assets/tmp/index.html.gz';
 
@@ -80,7 +82,7 @@ class WriterTest extends TestCase
         self::rm($file);
     }
 
-    public function testInvalidStatusCode()
+    public function testInvalidStatusCode(): void
     {
         $file = __DIR__.'/assets/tmp/index.html.gz';
 
@@ -102,7 +104,7 @@ class WriterTest extends TestCase
         self::rm($file);
     }
 
-    public function testNoCacheHeaders()
+    public function testNoCacheHeaders(): void
     {
         $file = __DIR__.'/assets/tmp/index.html.gz';
 
@@ -127,7 +129,7 @@ class WriterTest extends TestCase
         self::rm($file);
     }
 
-    private static function rm($file)
+    private static function rm(string $file): void
     {
         if (is_file($file)) {
             unlink($file);
