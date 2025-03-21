@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.0.0] - 2020-12-03
 ### Changed
+- PHP 7.2 remains th  minimum version.
 - Updated `league/filesystem` to version 2 for php 7.2, 7.3 and 7.4, and to version 3 for >= php 8.0.
 - With these changes, a breaking change is introduced by `league/filesystem`. Now you have to pass a FilesystemOperator interface compliant class to the middlewares. Check README's code examples.
 
