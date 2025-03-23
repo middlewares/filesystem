@@ -3,20 +3,20 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Flysystem;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 abstract class Filesystem
 {
     /**
-     * @var FilesystemInterface
+     * @var FilesystemOperator
      */
     protected $filesystem;
 
-    protected static function createLocalFlysystem(string $path): FilesystemInterface
+    protected static function createLocalFlysystem(string $path): FilesystemOperator
     {
-        return new Flysystem(new Local($path));
+        return new Flysystem(new LocalFilesystemAdapter($path));
     }
 
     /**
@@ -25,8 +25,8 @@ abstract class Filesystem
     protected static function getFilename(string $path): string
     {
         $parts = pathinfo(urldecode($path));
-        $path = isset($parts['dirname']) ? $parts['dirname'] : '';
-        $filename = isset($parts['basename']) ? $parts['basename'] : '';
+        $path = $parts['dirname'] ?? '';
+        $filename = $parts['basename'];
 
         //if has not extension, assume it's a directory and append index.html
         if (empty($parts['extension'])) {

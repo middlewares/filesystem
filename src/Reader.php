@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Middlewares\Utils\Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,16 +32,17 @@ class Reader extends Filesystem implements MiddlewareInterface
 
     public static function createFromDirectory(
         string $path,
-        ResponseFactoryInterface $responseFactory = null,
-        StreamFactoryInterface $streamFactory = null
+        ?ResponseFactoryInterface $responseFactory = null,
+        ?StreamFactoryInterface $streamFactory = null
     ): self {
+        /* @note We use static so that other classes can extend it and get the expected behaviour */
         return new static(static::createLocalFlysystem($path), $responseFactory, $streamFactory);
     }
 
     public function __construct(
-        FilesystemInterface $filesystem,
-        ResponseFactoryInterface $responseFactory = null,
-        StreamFactoryInterface $streamFactory = null
+        FilesystemOperator $filesystem,
+        ?ResponseFactoryInterface $responseFactory = null,
+        ?StreamFactoryInterface $streamFactory = null
     ) {
         $this->filesystem = $filesystem;
         $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
@@ -74,14 +75,16 @@ class Reader extends Filesystem implements MiddlewareInterface
 
         $file = static::getFilename($request->getUri()->getPath());
 
-        if ($this->filesystem->has($file)) {
+        if ($this->filesystem->fileExists($file)) {
             return $this->read($request, $file);
         }
 
         //If the file does not exists, check if is gzipped
         $file .= '.gz';
 
-        if (stripos($request->getHeaderLine('Accept-Encoding'), 'gzip') === false || !$this->filesystem->has($file)) {
+        if (stripos($request->getHeaderLine('Accept-Encoding'), 'gzip') === false
+            || !$this->filesystem->fileExists($file)
+        ) {
             if ($this->continueOnError) {
                 return $handler->handle($request);
             }
@@ -97,6 +100,7 @@ class Reader extends Filesystem implements MiddlewareInterface
      */
     private function read(ServerRequestInterface $request, string $file): ResponseInterface
     {
+        /** @var resource|false $resource */
         $resource = $this->filesystem->readStream($file);
 
         if ($resource === false) {
@@ -136,7 +140,7 @@ class Reader extends Filesystem implements MiddlewareInterface
     /**
      * Parses a range header, for example: bytes=500-999.
      *
-     * @return false|array [first, last]
+     * @return array{0: int, 1: int|null}|false
      */
     private static function parseRangeHeader(string $header)
     {

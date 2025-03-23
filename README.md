@@ -45,18 +45,30 @@ Example using a ftp storage:
 
 ```php
 use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Ftp;
+use League\Flysystem\Ftp\FtpAdapter;
+use League\Flysystem\Ftp\FtpConnectionOptions;
 
-$filesystem = new Filesystem(new Ftp([
-    'host' => 'ftp.example.com',
-    'username' => 'username',
-    'password' => 'password',
-    'port' => 21,
-    'root' => '/path/to/root',
-    'passive' => true,
-    'ssl' => true,
-    'timeout' => 30,
-]));
+$adapter = new League\Flysystem\Ftp\FtpAdapter(
+    FtpConnectionOptions::fromArray([
+        'host' => 'hostname',
+        'root' => '/root/path/',
+        'username' => 'username',
+        'password' => 'password',
+        'port' => 21,
+        'ssl' => false,
+        'timeout' => 90,
+        'utf8' => false,
+        'passive' => true,
+        'transferMode' => FTP_BINARY,
+        'systemType' => null, // 'windows' or 'unix'
+        'ignorePassiveAddress' => null, // true or false
+        'timestampsOnUnixListingsEnabled' => false, // true or false
+        'recurseManually' => true // true 
+    ])
+);
+
+// The FilesystemOperator
+$filesystem = new Filesystem($adapter);
 
 Dispatcher::run([
     new Middlewares\Reader($filesystem)
@@ -77,7 +89,7 @@ $reader = new Middlewares\Reader($filesystem, $responseFactory, $streamFactory);
 Allows to continue to the next middleware on error (file not found, method not allowed, etc). This allows to create a simple caching system as the following:
 
 ```php
-$cache = new Flysystem(new Local(__DIR__.'/path/to/files'));
+$cache = new Filesystem(new LocalFilesystemAdapter(__DIR__.'/path/to/files'));
 
 Dispatcher::run([
     (new Middlewares\Reader($cache))    //read and returns the cached response...
@@ -103,7 +115,7 @@ To be compatible with `Reader` behaviour:
 * If the response is gzipped (has the header `Content-Encoding: gzip`) the file is saved with the extension .gz. For example `/post/23/index.html.gz` (instead `/post/23/index.html`).
 
 ```php
-$filesystem = new Flysystem(new Local(__DIR__.'/storage'));
+$filesystem = new Filesystem(new LocalFilesystemAdapter(__DIR__.'/storage'));
 
 Dispatcher::run([
     new Middlewares\Writer($filesystem)

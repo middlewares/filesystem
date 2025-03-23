@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Middlewares\Tests;
 
 use Middlewares\Reader;
@@ -16,13 +18,14 @@ class ReaderTest extends TestCase
     {
         if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
             parent::assertMatchesRegularExpression($pattern, $string, $message);
+
             return;
         }
 
         self::assertRegExp($pattern, $string, $message);
     }
 
-    public function testInvalidMethod()
+    public function testInvalidMethod(): void
     {
         $response = Dispatcher::run(
             [
@@ -35,7 +38,7 @@ class ReaderTest extends TestCase
         self::assertEquals('GET', $response->getHeaderLine('Allow'));
     }
 
-    public function testGz()
+    public function testGz(): void
     {
         $response = Dispatcher::run(
             [
@@ -49,7 +52,7 @@ class ReaderTest extends TestCase
         self::assertEquals('gzip', $response->getHeaderLine('Content-Encoding'));
     }
 
-    public function testNotFound()
+    public function testNotFound(): void
     {
         $response = Dispatcher::run(
             [
@@ -61,7 +64,7 @@ class ReaderTest extends TestCase
         self::assertEquals(404, $response->getStatusCode());
     }
 
-    public function testContinueOnNotFound()
+    public function testContinueOnNotFound(): void
     {
         $response = Dispatcher::run(
             [
@@ -79,7 +82,7 @@ class ReaderTest extends TestCase
         self::assertEquals('Fallback', (string) $response->getBody());
     }
 
-    public function testContinueOnInvalidMethod()
+    public function testContinueOnInvalidMethod(): void
     {
         $response = Dispatcher::run(
             [
@@ -97,7 +100,7 @@ class ReaderTest extends TestCase
         self::assertEquals('Fallback', (string) $response->getBody());
     }
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $response = Dispatcher::run(
             [
@@ -112,7 +115,7 @@ class ReaderTest extends TestCase
         self::assertEquals($content, (string) $response->getBody());
     }
 
-    public function testContentRange()
+    public function testContentRange(): void
     {
         $response = Dispatcher::run(
             [
@@ -126,7 +129,7 @@ class ReaderTest extends TestCase
         self::assertMatchesRegularExpression('|^bytes 300-\d{6}/\d{6}$|', $response->getHeaderLine('Content-Range'));
     }
 
-    public function testInvalidContentRange()
+    public function testInvalidContentRange(): void
     {
         $response = Dispatcher::run(
             [
