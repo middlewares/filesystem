@@ -5,7 +5,7 @@
 ![Testing][ico-ga]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Middleware to save or read responses from files. It uses [Flysystem](http://flysystem.thephpleague.com/) as filesystem handler, so you can use not only a local directories, but also any other adapter like [ftp](http://flysystem.thephpleague.com/adapter/ftp/), [sftp](http://flysystem.thephpleague.com/adapter/sftp/), [dropbox](http://flysystem.thephpleague.com/adapter/dropbox/), etc... This package includes the following components:
+Middleware to save or read responses from files. It uses [Flysystem](http://flysystem.thephpleague.com/) as filesystem handler, so you can not only use a local directories, but also any other adapter like [ftp](http://flysystem.thephpleague.com/adapter/ftp/), [sftp](http://flysystem.thephpleague.com/adapter/sftp/), [dropbox](http://flysystem.thephpleague.com/adapter/dropbox/), etc... This package includes the following components:
 
 * [Reader](#reader)
 * [Writer](#writer)
